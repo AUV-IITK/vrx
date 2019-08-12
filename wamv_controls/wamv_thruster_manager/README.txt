@@ -1,0 +1,1 @@
+Takes the forces from low level controller and get all the thrust forces to be applied on the thrusters

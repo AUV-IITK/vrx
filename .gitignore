@@ -1,0 +1,5 @@
+.hg*
+.vscode
+Changelog.md
+bitbucket-pipelines.yml
+*CHANGELOG.rst

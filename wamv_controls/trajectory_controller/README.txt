@@ -1,0 +1,1 @@
+High level controller to trace a number of waypoints

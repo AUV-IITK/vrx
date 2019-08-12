@@ -1,0 +1,1 @@
+Takes input from various sensor, either raw or preprocessed to produce an estimated pose of the vehicle
