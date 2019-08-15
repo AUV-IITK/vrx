@@ -31,8 +31,6 @@ find_package(
 add_service_files(
         DIRECTORY srv
         FILES
-        SetDepthOffset.srv
-        SetWorldXYOffset.srv
         ResetIMU.srv
 )
 

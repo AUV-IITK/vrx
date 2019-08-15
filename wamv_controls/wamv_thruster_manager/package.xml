@@ -4,6 +4,8 @@
   <version>0.6.8</version>
   <description>The thruster manager package</description>
 
+  <maintainer email="ksakash@iitk.ac.in">Akash Kumar Singh</maintainer>
+
   <license>Apache-2.0</license>
 
   <buildtool_depend>catkin</buildtool_depend>

@@ -10,7 +10,6 @@ IMUData::IMUData() : quaternion_(0.0, 0.0, 0.0, 0.0)
     angularVelocity_ = Eigen::Vector3d::Zero();
     linearAcceleration_ = Eigen::Vector3d::Zero();
 }
-IMUData::~IMUData() {}
 
 void IMUData::IMUMsgCallback(sensor_msgs::Imu msg)
 {

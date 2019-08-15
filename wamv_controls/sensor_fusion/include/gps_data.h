@@ -1,8 +1,5 @@
-#ifndef DVL_DATA_H
-#define DVL_DATA_H
+#pragma once
 
-#include <geometry_msgs/TwistWithCovarianceStamped.h>
-#include <sensor_msgs/FluidPressure.h>
 #include <eigen3/Eigen/Geometry>
 #include "navigation_device.h"
 #include <geometry_msgs/TwistWithCovarianceStamped.h>
@@ -10,14 +7,12 @@
 
 namespace navigation{
 
-    class DvlData: public NavigationDevice 
+    class GPSData: public NavigationDevice 
     {
-        typedef void (DvlData::*IntegrationMethodT) (const double &);
+        typedef void (GPSData::*IntegrationMethodT) (const double &);
     
     public:
     
-        const double BAR_TO_METER_OF_WATER = 10.1972;
-
         enum IntegrationMethodType
         {
             StdMethod  = 0,
@@ -25,16 +20,12 @@ namespace navigation{
             DefaultMethod
         };
 
-        DvlData(IntegrationMethodType integrationMethodType = RKMethod);
-        ~DvlData();
+        GPSData(IntegrationMethodType integrationMethodType = RKMethod);
 
-        void DvlTwistCallback(geometry_msgs::Vector3 msg);
-        void DvlPressureCallback(sensor_msgs::FluidPressure msg);
+        void GPSTwistCallback(geometry_msgs::Vector3 msg);
 
         Eigen::Vector3d GetPositionXYZ();
         Eigen::Vector3d GetVelocityXYZ();
-        double GetPositionZFromPressure();
-        sensor_msgs::FluidPressure GetPressure();
 
     private:
         void StdIntegrationMethod(const double &dt_sec);
@@ -45,11 +36,8 @@ namespace navigation{
         Eigen::Vector3d positionIncrement_;
         Eigen::MatrixXd historyPositionIncrement_;
 
-        geometry_msgs::TwistWithCovarianceStamped dvl_twist_;
         geometry_msgs::Vector3 gps_twist_;
-        sensor_msgs::FluidPressure dvl_pressure_;
 
         IntegrationMethodT integrationMethod_;
     };
 }
-#endif // DVLDATA_H

@@ -11,7 +11,6 @@ public:
     const double RAD_TO_DEGREE = 180.0f / M_PI;
 
     IMUData();
-    ~IMUData();
 
     void IMUMsgCallback(sensor_msgs::Imu msg);
     Eigen::Quaterniond GetQuaternion();

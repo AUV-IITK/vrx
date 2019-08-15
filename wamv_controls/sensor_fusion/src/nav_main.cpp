@@ -1,25 +1,16 @@
 #include "nav_main.h"
 
-namespace navigation
-{
-NavigationNode::NavigationNode(const ros::NodeHandlePtr &nh) : nh_(nh), quaternion_(0.0, 0.0, 0.0, 0.0)
-{
-    dvlTwistSubscriber_ = nh_->subscribe("/gps/velocity", 100,
-                                         &DvlData::DvlTwistCallback, &dvlData_);
-    dvlPressureSubscriber_ = nh_->subscribe("/anahita/pressure", 100,
-                                            &DvlData::DvlPressureCallback, &dvlData_);
-    imuSubscriber_ = nh_->subscribe("/imu/data", 100,
-                                    &IMUData::IMUMsgCallback, &imuData_);
+namespace navigation {
 
-    navigationDepthOffsetServer_ = nh_->advertiseService("/nav/set_depth_offset",
-                                                         &navigation::NavigationNode::SetDepthOffsetCallback, this);
-    navigationXYOffsetServer_ = nh_->advertiseService("/nav/set_world_x_y_offset",
-                                                      &navigation::NavigationNode::SetWorldXYOffsetCallback, this);
+NavigationNode::NavigationNode(const ros::NodeHandlePtr &nh) : 
+    nh_(nh), quaternion_(0.0, 0.0, 0.0, 0.0) {
+    gpsTwistSubscriber_ = nh_->subscribe("/gps/velocity", 100, &GPSData::GPSTwistCallback, &gpsData_);
+    imuSubscriber_ = nh_->subscribe("/imu/data", 100, &IMUData::IMUMsgCallback, &imuData_);
 
-    navigationOdomPublisher_ = nh_->advertise<nav_msgs::Odometry>("/anahita/pose_gt/global", 100);
-    odom_pub_ = nh_->advertise<nav_msgs::Odometry>("/anahita/pose_gt/relay", 100);
+    navigationOdomPublisher_ = nh_->advertise<nav_msgs::Odometry>("/wamv/pose_gt/global", 100);
+    odom_pub_ = nh_->advertise<nav_msgs::Odometry>("/wamv/pose_gt/relay", 100);
 
-    reset_imu_ = nh_->advertiseService("/anahita/reset_imu", &navigation::NavigationNode::resetCB, this);
+    reset_imu_ = nh_->advertiseService("/wamv/reset_imu", &navigation::NavigationNode::resetCB, this);
     
     position_ = Eigen::Vector3d::Zero();
     local_position_ = Eigen::Vector3d::Zero();
@@ -27,23 +18,18 @@ NavigationNode::NavigationNode(const ros::NodeHandlePtr &nh) : nh_(nh), quaterni
     velocity_ = Eigen::Vector3d::Zero();
     angularVelocity_ = Eigen::Vector3d::Zero();
     eulerAngel_ = Eigen::Vector3d::Zero();
-    zOffset_ = 0;
     imu_offset_ = Eigen::Vector3d::Zero();
 
     ROS_INFO("Set up initial constructor successfully");
 }
 
-NavigationNode::~NavigationNode()
-{
-    dvlTwistSubscriber_.shutdown();
-    dvlPressureSubscriber_.shutdown();
+NavigationNode::~NavigationNode() {
+    gpsTwistSubscriber_.shutdown();
     imuSubscriber_.shutdown();
-    navigationDepthOffsetServer_.shutdown();
-    navigationXYOffsetServer_.shutdown();
+    reset_imu_.shutdown();
 }
 
-void NavigationNode::Spin()
-{
+void NavigationNode::Spin() {
     ros::Rate loop_rate(15); // 100 hz
     while (ros::ok())
     {
@@ -53,29 +39,7 @@ void NavigationNode::Spin()
     }
 }
 
-bool NavigationNode::SetDepthOffsetCallback(
-    sensor_fusion::SetDepthOffset::Request &request,
-    sensor_fusion::SetDepthOffset::Response &response)
-{
-    zOffset_ = dvlData_.GetPositionZFromPressure();
-    imuData_.SetNewDataReady();
-    ROS_INFO("Service completed");
-    return true;
-}
-
-bool NavigationNode::SetWorldXYOffsetCallback(
-    sensor_fusion::SetWorldXYOffset::Request &request,
-    sensor_fusion::SetWorldXYOffset::Response &response)
-{
-    position_.x() = 0.0f;
-    position_.y() = 0.0f;
-    dvlData_.SetNewDataReady();
-    ROS_INFO("Service completed");
-    return true;
-}
-
-Eigen::Vector3d toEulerAngle(const Eigen::Quaterniond& q)
-{
+Eigen::Vector3d toEulerAngle(const Eigen::Quaterniond& q) {
 	// roll (x-axis rotation)
     double roll, pitch, yaw;
 	double sinr_cosp = +2.0 * (q.w() * q.x() + q.y() * q.z());
@@ -113,7 +77,7 @@ bool NavigationNode::resetCB (sensor_fusion::ResetIMU::Request& req,
 
     local_position_.x() = 0.0f;
     local_position_.y() = 0.0f;
-    dvlData_.SetNewDataReady();
+    gpsData_.SetNewDataReady();
 
     res.success = true;
     ROS_INFO("Service completed");
@@ -140,16 +104,13 @@ void NavigationNode::correct_orientation (Eigen::Quaterniond& q) {
     }
 }
 
-void NavigationNode::ProcessCartesianPose()
-{
-    if (dvlData_.IsNewDataReady() || imuData_.IsNewDataReady())
-    {
-        dvlData_.SetNewDataUsed();
+void NavigationNode::ProcessCartesianPose() {
+    if (gpsData_.IsNewDataReady() || imuData_.IsNewDataReady()) {
+        gpsData_.SetNewDataUsed();
         imuData_.SetNewDataUsed();
 
-        incrementPosition_ = dvlData_.GetPositionXYZ();
-        positionFromDepth_ = dvlData_.GetPositionZFromPressure();
-        velocity_ = dvlData_.GetVelocityXYZ();
+        incrementPosition_ = gpsData_.GetPositionXYZ();
+        velocity_ = gpsData_.GetVelocityXYZ();
         angularVelocity_ = imuData_.GetAngularVelocity();
         eulerAngel_ = imuData_.GetOrientation();
         quaternion_ = imuData_.GetQuaternion();
@@ -157,58 +118,31 @@ void NavigationNode::ProcessCartesianPose()
         correct_orientation (local_orientation_);
         local_orientation_.x() = quaternion_.x();
         local_orientation_.y() = quaternion_.y();
-        // ROS_INFO("Value of incrementPosition_: x: %f, y: %f,z: %f", incrementPosition_.x(), incrementPosition_.y(), incrementPosition_.z());
         position_ += quaternion_.toRotationMatrix() * incrementPosition_;
         local_position_ += local_orientation_.toRotationMatrix() * incrementPosition_;
-        // ROS_INFO("(Without EKF) Position.x: %f, Position.y: %f, Position.z: %f", position_.x(), position_.y(), position_.z());
 
         position_.z() = 0;
         local_position_.z() = 0;
 
-        dvlFilter_.Update(position_, poseEstimation_);
-        dvlFilter_.Update(local_position_, localPoseEstimation_);
+        gpsFilter_.Update(position_, poseEstimation_);
+        gpsFilter_.Update(local_position_, localPoseEstimation_);
 
         ros::Time currentTime = ros::Time::now();
 
         PublishData(currentTime);
-        // BroadcastTransform(poseEstimation_, quaternion_, currentTime);
     }
 }
 
-void NavigationNode::BroadcastTransform(Eigen::Vector3d &position,
-                                        Eigen::Quaterniond &quaternion,
-                                        ros::Time &current_time)
-{
-    // ROS_INFO("Publishing a transform");
-    geometry_msgs::TransformStamped odom_trans;
-    odom_trans.header.stamp = current_time;
-    odom_trans.header.frame_id = "world";
-    odom_trans.child_frame_id = "anahita/base_link";
-
-    odom_trans.transform.translation.x = position.x();
-    odom_trans.transform.translation.y = position.y();
-    odom_trans.transform.translation.z = position.z();
-    odom_trans.transform.rotation.w = quaternion.w();
-    odom_trans.transform.rotation.x = quaternion.x();
-    odom_trans.transform.rotation.y = quaternion.y();
-    odom_trans.transform.rotation.z = quaternion.z();
-
-    // send the transform
-    // odom_broadcaster.sendTransform(odom_trans);
-    ROS_INFO("Published the transform");
-}
-
-void NavigationNode::PublishData(ros::Time &current_time)
-{
+void NavigationNode::PublishData(ros::Time &current_time) {
     nav_msgs::Odometry odometry_msg;
     nav_msgs::Odometry local_msg;
 
     odometry_msg.header.frame_id = "world";
-    odometry_msg.child_frame_id = "anahita/base_link";
+    odometry_msg.child_frame_id = "wamv/base_link";
     odometry_msg.header.stamp = current_time;
 
     local_msg.header.frame_id = "world";
-    local_msg.child_frame_id = "anahita/base_link";
+    local_msg.child_frame_id = "wamv/base_link";
     local_msg.header.stamp = current_time;
 
     FillPoseMsg (poseEstimation_, quaternion_, odometry_msg);
@@ -223,8 +157,7 @@ void NavigationNode::PublishData(ros::Time &current_time)
 
 void NavigationNode::FillPoseMsg(Eigen::Vector3d &position,
                                  Eigen::Quaterniond &quaternion,
-                                 nav_msgs::Odometry &msg)
-{
+                                 nav_msgs::Odometry &msg) {
     msg.pose.pose.position.x = position.x();
     msg.pose.pose.position.y = position.y();
     msg.pose.pose.position.z = position.z();
@@ -234,8 +167,9 @@ void NavigationNode::FillPoseMsg(Eigen::Vector3d &position,
     msg.pose.pose.orientation.w = quaternion.w();
 }
 
-void NavigationNode::FillTwistMsg(Eigen::Vector3d &linear_velocity, Eigen::Vector3d &angular_velocity, nav_msgs::Odometry &msg)
-{
+void NavigationNode::FillTwistMsg(Eigen::Vector3d &linear_velocity, 
+                                  Eigen::Vector3d &angular_velocity, 
+                                  nav_msgs::Odometry &msg) {
     msg.twist.twist.linear.x = linear_velocity.x();
     msg.twist.twist.linear.y = linear_velocity.y();
     msg.twist.twist.linear.z = linear_velocity.z();

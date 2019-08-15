@@ -1,43 +1,35 @@
 #include <ros/ros.h>
-#include "dvl_data.h"
+#include <gps_data.h>
 
 namespace navigation{
 
-    DvlData::DvlData(IntegrationMethodType integrationMethodType) :
+    GPSData::GPSData(IntegrationMethodType integrationMethodType) :
             last_timestamp_(ros::Time::now())
     {
         positionIncrement_        = Eigen::Vector3d::Zero();
         historyPositionIncrement_ = Eigen::MatrixXd::Zero(3, 4);
-        dvl_pressure_.fluid_pressure = 101.325;
 
         switch (integrationMethodType)
         {
             case StdMethod :
-                integrationMethod_ = &DvlData::StdIntegrationMethod;
+                integrationMethod_ = &GPSData::StdIntegrationMethod;
                 break;
             case RKMethod  :
-                integrationMethod_ = &DvlData::RKIntegrationMethod;
+                integrationMethod_ = &GPSData::RKIntegrationMethod;
                 break;
             default :
-                integrationMethod_ = &DvlData::StdIntegrationMethod;
+                integrationMethod_ = &GPSData::StdIntegrationMethod;
                 break;
         }
     }
 
-    DvlData::~DvlData() { }
-    void DvlData::DvlTwistCallback(geometry_msgs::Vector3 msg)
+    void GPSData::GPSTwistCallback(geometry_msgs::Vector3 msg)
     {
         gps_twist_ = msg;
         SetNewDataReady();
     }
 
-    void DvlData::DvlPressureCallback(sensor_msgs::FluidPressure msg)
-    {
-        dvl_pressure_ = msg;
-        SetNewDataReady();
-    }
-
-    Eigen::Vector3d DvlData::GetPositionXYZ()
+    Eigen::Vector3d GPSData::GetPositionXYZ()
     {
         ros::Duration dt = ros::Time::now() - last_timestamp_;
         double dt_sec = dt.toSec();
@@ -49,13 +41,12 @@ namespace navigation{
         return positionIncrement_;
     }
 
-    void DvlData::StdIntegrationMethod(const double &dt_sec)
+    void GPSData::StdIntegrationMethod(const double &dt_sec)
     {
         positionIncrement_ << gps_twist_.x * dt_sec, gps_twist_.y * dt_sec, gps_twist_.z * dt_sec;
-        // std::cout << positionIncrement_ << std::endl;
     }
 
-    void DvlData::RKIntegrationMethod(const double &dt_sec)
+    void GPSData::RKIntegrationMethod(const double &dt_sec)
     {
         positionIncrement_ << gps_twist_.x * dt_sec, gps_twist_.y * dt_sec, gps_twist_.z * dt_sec;
         historyPositionIncrement_.block<3,3>(0, 1) = historyPositionIncrement_.block<3,3>(0, 0);
@@ -63,20 +54,10 @@ namespace navigation{
         positionIncrement_ = (1.0 / 6.0) * (historyPositionIncrement_.col(0) + 2 * historyPositionIncrement_.col(1) + 2 * historyPositionIncrement_.col(2) + historyPositionIncrement_.col(3));
     }
 
-    Eigen::Vector3d DvlData::GetVelocityXYZ()
+    Eigen::Vector3d GPSData::GetVelocityXYZ()
     {
         Eigen::Vector3d twist;
         twist << gps_twist_.x, gps_twist_.y, gps_twist_.z;
         return twist;
-    }
-
-    sensor_msgs::FluidPressure DvlData::GetPressure()
-    {
-        return dvl_pressure_;
-    }
-
-    double DvlData::GetPositionZFromPressure()
-    {
-        return (101.325 - dvl_pressure_.fluid_pressure) / 9.80638;
     }
 }
