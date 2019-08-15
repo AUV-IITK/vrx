@@ -1,0 +1,12 @@
+<launch>
+  <arg name="tam_file" default="$(find wamv_thruster_manager)/config/$(arg model_name)/TAM.yaml"/>
+
+  <node pkg="wamv_thruster_manager"
+        type="thrust_allocator.py"
+        name="thrust_allocator"
+        output="screen">
+    <!-- Load thruster allocation matrix -->
+    <rosparam file="$(arg tam_file)" command="load"/>
+  </node>
+
+</launch>
