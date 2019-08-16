@@ -1,4 +1,6 @@
 <launch>
+  <arg name="model_name" default="wamv"/>
+  <arg name="uuv_name" default="$(arg model_name)"/>
   <include file="$(find wamv_thruster_manager)/launch/thruster_manager.launch" />
 
   <group ns="$(arg uuv_name)">

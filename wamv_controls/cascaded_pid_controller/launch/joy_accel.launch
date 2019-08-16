@@ -1,5 +1,5 @@
 <launch>
-  <arg name="model_name" />
+  <arg name="model_name" default="wamv" />
   <arg name="uuv_name" default="$(arg model_name)"/>
   <arg name="joy_id" default="0"/>
 
@@ -11,7 +11,7 @@
     <node pkg="cascaded_pid_controller" type="AccelerationControl.py" name="acceleration_control" output="screen" />
   </group>
 
-  <include file="$(find uuv_teleop)/launch/uuv_teleop.launch">
+  <include file="$(find wamv_teleop)/launch/wamv_teleop.launch">
     <arg name="uuv_name" value="$(arg uuv_name)"/>
     <arg name="joy_id" value="$(arg joy_id)"/>
     <arg name="output_topic" value="cmd_accel"/>
