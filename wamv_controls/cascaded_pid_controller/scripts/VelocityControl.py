@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import numpy
 import rospy
 from dynamic_reconfigure.server import Server
