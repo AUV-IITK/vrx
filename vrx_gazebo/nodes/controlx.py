@@ -25,7 +25,6 @@ class Node():
         self.right_rear_sub = rospy.Subscriber("/anahita/thrusters/3/input", FloatStamped, self.callback_rr)
 
     def callback_rf (self, msg):
-        # print (msg)
         self.right_front_msg.data = msg.data/scale
         self.right_front_pub.publish(self.right_front_msg)
     

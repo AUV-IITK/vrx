@@ -1,0 +1,14 @@
+<launch>
+  <arg name="model_name" default="wamv"/>
+  <arg name="uuv_name" default="$(arg model_name)"/>
+
+  <include file="$(find uuv_thruster_manager)/launch/thruster_manager.launch" />
+
+  <group ns="$(arg uuv_name)">
+    <rosparam file="$(find cascaded_pid_controller)/config/$(arg model_name)/inertial.yaml" command="load"/>
+    <rosparam file="$(find cascaded_pid_controller)/config/$(arg model_name)/vel_pid_control.yaml" command="load"/>
+
+    <node pkg="cascaded_pid_controller" type="AccelerationControl.py" name="acceleration_control" output="screen" />
+    <node pkg="cascaded_pid_controller" type="VelocityControl.py" name="velocity_control" output="screen" />
+  </group>
+</launch>
