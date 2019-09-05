@@ -1,0 +1,8 @@
+To incorporate the GPS data with EKF
+
+1. using `robot_localization` pkg
+2. to configure `ekf_localization_node` and `navsat_transform_node` from (~/Downloads/robot_localization.pdf)
+3. tutorials links: http://docs.ros.org/melodic/api/robot_localization/html/index.html
+   https://github.com/methylDragon/ros-sensor-fusion-tutorial
+   https://answers.ros.org/question/200071/how-to-fuse-imu-gps-using-robot_localization/
+4. to check the performance of current implementation with ground truth

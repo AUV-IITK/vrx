@@ -24,7 +24,7 @@
        H = stern trusters on each hull
        T = H with a lateral thruster
        X = "holonomic" configuration -->
-  <arg name="thrust_config" default="H" />
+  <arg name="thrust_config" default="X" />
 
   <!-- Do we lock the vessel to the world? -->
   <arg name="wamv_locked" default="true" />
