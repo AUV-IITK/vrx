@@ -1,4 +1,5 @@
 <launch>
+  <arg name="model_name" default="wamv"/>
   <arg name="tam_file" default="$(find wamv_thruster_manager)/config/$(arg model_name)/TAM.yaml"/>
 
   <node pkg="wamv_thruster_manager"
