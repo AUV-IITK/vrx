@@ -8,8 +8,14 @@
     <rosparam file="$(find cascaded_pid_controller)/config/$(arg model_name)/vel_pid_control.yaml" command="load"/>
     <rosparam file="$(find cascaded_pid_controller)/config/$(arg model_name)/pos_pid_control.yaml" command="load"/>
 
-    <node pkg="cascaded_pid_controller" type="AccelerationControl.py" name="acceleration_control" output="screen" />
-    <node pkg="cascaded_pid_controller" type="VelocityControl.py" name="velocity_control" output="screen" />
-    <node pkg="cascaded_pid_controller" type="PositionControl.py" name="position_control" output="screen" />
+    <node pkg="cascaded_pid_controller" type="AccelerationControl.py" name="acceleration_control" output="screen">
+       <remap from="/wamv/pose_gt" to="/odometry/filtered"/>
+    </node>
+    <node pkg="cascaded_pid_controller" type="VelocityControl.py" name="velocity_control" output="screen">
+       <remap from="/wamv/pose_gt" to="/odometry/filtered"/>
+    </node>
+    <node pkg="cascaded_pid_controller" type="PositionControl.py" name="position_control" output="screen">
+       <remap from="/wamv/pose_gt" to="/odometry/filtered"/>
+    </node>
   </group>
 </launch>
