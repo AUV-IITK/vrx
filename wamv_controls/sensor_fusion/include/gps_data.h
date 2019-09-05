@@ -7,12 +7,12 @@
 
 namespace navigation{
 
-    class GPSData: public NavigationDevice 
+    class GPSData: public NavigationDevice
     {
         typedef void (GPSData::*IntegrationMethodT) (const double &);
-    
+
     public:
-    
+
         enum IntegrationMethodType
         {
             StdMethod  = 0,

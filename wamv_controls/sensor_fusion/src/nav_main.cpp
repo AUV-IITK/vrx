@@ -2,7 +2,7 @@
 
 namespace navigation {
 
-NavigationNode::NavigationNode(const ros::NodeHandlePtr &nh) : 
+NavigationNode::NavigationNode(const ros::NodeHandlePtr &nh) :
     nh_(nh), quaternion_(0.0, 0.0, 0.0, 0.0) {
     gpsTwistSubscriber_ = nh_->subscribe("/gps/velocity", 100, &GPSData::GPSTwistCallback, &gpsData_);
     imuSubscriber_ = nh_->subscribe("/imu/data", 100, &IMUData::IMUMsgCallback, &imuData_);
@@ -11,7 +11,7 @@ NavigationNode::NavigationNode(const ros::NodeHandlePtr &nh) :
     odom_pub_ = nh_->advertise<nav_msgs::Odometry>("/wamv/pose_gt/relay", 100);
 
     reset_imu_ = nh_->advertiseService("/wamv/reset_imu", &navigation::NavigationNode::resetCB, this);
-    
+
     position_ = Eigen::Vector3d::Zero();
     local_position_ = Eigen::Vector3d::Zero();
     incrementPosition_ = Eigen::Vector3d::Zero();
@@ -30,12 +30,13 @@ NavigationNode::~NavigationNode() {
 }
 
 void NavigationNode::Spin() {
+    using namespace std::chrono_literals;
     ros::Rate loop_rate(15); // 100 hz
     while (ros::ok())
     {
         ros::spinOnce();
         ProcessCartesianPose();
-        loop_rate.sleep();
+        std::this_thread::sleep_for(0.05s);
     }
 }
 
@@ -55,7 +56,7 @@ Eigen::Vector3d toEulerAngle(const Eigen::Quaterniond& q) {
 
 	// yaw (z-axis rotation)
 	double siny_cosp = +2.0 * (q.w() * q.z() + q.x() * q.y());
-	double cosy_cosp = +1.0 - 2.0 * (q.y() * q.y() + q.z() * q.z());  
+	double cosy_cosp = +1.0 - 2.0 * (q.y() * q.y() + q.z() * q.z());
 	yaw = atan2(siny_cosp, cosy_cosp);
 
     Eigen::Vector3d euler;
@@ -81,7 +82,7 @@ bool NavigationNode::resetCB (sensor_fusion::ResetIMU::Request& req,
 
     res.success = true;
     ROS_INFO("Service completed");
-    return true; 
+    return true;
 }
 
 void NavigationNode::correct_orientation (Eigen::Quaterniond& q) {
@@ -167,8 +168,8 @@ void NavigationNode::FillPoseMsg(Eigen::Vector3d &position,
     msg.pose.pose.orientation.w = quaternion.w();
 }
 
-void NavigationNode::FillTwistMsg(Eigen::Vector3d &linear_velocity, 
-                                  Eigen::Vector3d &angular_velocity, 
+void NavigationNode::FillTwistMsg(Eigen::Vector3d &linear_velocity,
+                                  Eigen::Vector3d &angular_velocity,
                                   nav_msgs::Odometry &msg) {
     msg.twist.twist.linear.x = linear_velocity.x();
     msg.twist.twist.linear.y = linear_velocity.y();
