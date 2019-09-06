@@ -22,7 +22,7 @@
        H = stern trusters on each hull
        T = H with a lateral thruster
        X = "holonomic" configuration -->
-  <arg name="thrust_config" default="T" />
+  <arg name="thrust_config" default="X" />
 
   <!-- Do we load the VRX sensor suite? -->
   <arg name="vrx_sensors_enabled" default="true" />

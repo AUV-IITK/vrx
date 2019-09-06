@@ -23,7 +23,7 @@ find_package(Boost REQUIRED COMPONENTS system)
 find_package(OpenCV REQUIRED)
 generate_messages (
     DEPENDENCIES
-    std_msgs   
+    std_msgs
 )
 
 
