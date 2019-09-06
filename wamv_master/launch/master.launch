@@ -1,6 +1,8 @@
 <launch>
     <include file="$(find vrx_gazebo)/launch/vrx.launch"/>
-    <!---->include file="$(find sensor_fusion)/launch/odom.launch"/-->
+    <!-- <include file="$(find sensor_fusion)/launch/odom.launch" /> -->
     <include file="$(find wamv_gazebo)/launch/localization_example.launch"/>
     <include file="$(find wamv_gazebo)/launch/rviz_vrx.launch"/>
+
+    <include file="$(find cascaded_pid_controller)/launch/velocity_hold.launch"/>
 </launch>

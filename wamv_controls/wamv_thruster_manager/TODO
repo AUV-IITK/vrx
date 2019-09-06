@@ -1,0 +1,2 @@
+1. To check if `inverse_configuration` is not `None`.
+2. To verify that it is getting callbacks from `cascaded_pid_controller`.

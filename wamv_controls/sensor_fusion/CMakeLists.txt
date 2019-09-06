@@ -7,8 +7,8 @@ if (NOT CMAKE_BUILD_TYPE)
       FORCE)
 endif (NOT CMAKE_BUILD_TYPE)
 
-set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -std=c++11 -Wall")
-set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -std=c++11 -O3 -s")
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -std=c++14 -Wall")
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -std=c++14 -O3 -s")
 
 set(SRC_DIR "src")
 set(INCLUDE_DIR "include")
@@ -33,6 +33,9 @@ add_service_files(
         FILES
         ResetIMU.srv
 )
+
+# Python scripts setup
+catkin_python_setup()
 
 # Generate added messages and services with any dependencies listed here
 generate_messages(

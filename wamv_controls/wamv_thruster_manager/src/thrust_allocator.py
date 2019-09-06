@@ -5,6 +5,7 @@ import rospy
 import tf
 import tf.transformations as trans
 import tf2_ros
+from std_msgs.msg import Float32
 from os.path import isdir, join
 import yaml
 from time import sleep
@@ -35,8 +36,8 @@ class ThrustAllocator:
             rospy.loginfo(self.configuration_matrix)
             self.thrust = numpy.zeros(self.n_thrusters)
 
-        if not self.update_tam():
-            raise rospy.ROSException('No thrusters found')
+        # if not self.update_tam():
+        #    raise rospy.ROSException('No thrusters found')
 
         # (pseudo) inverse: force/torque to thruster inputs
         self.inverse_configuration_matrix = None

@@ -51,7 +51,8 @@ namespace navigation{
         positionIncrement_ << gps_twist_.x * dt_sec, gps_twist_.y * dt_sec, gps_twist_.z * dt_sec;
         historyPositionIncrement_.block<3,3>(0, 1) = historyPositionIncrement_.block<3,3>(0, 0);
         historyPositionIncrement_.col(0) = positionIncrement_;
-        positionIncrement_ = (1.0 / 6.0) * (historyPositionIncrement_.col(0) + 2 * historyPositionIncrement_.col(1) + 2 * historyPositionIncrement_.col(2) + historyPositionIncrement_.col(3));
+        positionIncrement_ = (1.0 / 6.0) * (historyPositionIncrement_.col(0) + 2 * historyPositionIncrement_.col(1) +
+                                2 * historyPositionIncrement_.col(2) + historyPositionIncrement_.col(3));
     }
 
     Eigen::Vector3d GPSData::GetVelocityXYZ()

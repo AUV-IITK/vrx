@@ -6,6 +6,7 @@ import numpy
 from sensor_msgs.msg import Imu
 from geometry_msgs.msg import Vector3Stamped, Vector3
 import tf.transformations as trans
+import time
 
 imu_data = Imu()
 gps_vel = Vector3Stamped()
@@ -24,7 +25,7 @@ def vel_fix(vel):
     org_vel = numpy.array([vel.x, vel.y, vel.z])
     trans_vel = trans.quaternion_matrix(q).transpose()[0:3,0:3].dot(org_vel)
     corr_vel = Vector3(trans_vel[0], trans_vel[1], trans_vel[2])
-    print ("corrected vel: \n{}".format(corr_vel))
+    # print ("corrected vel: \n{}".format(corr_vel))
     return corr_vel
 
 if __name__ == '__main__':
@@ -44,4 +45,4 @@ if __name__ == '__main__':
 
         correct_velocity = vel_fix(correct_velocity)
         vel_pub.publish(correct_velocity)
-        rospy.sleep(0.05)
+        time.sleep(0.05)

@@ -1,5 +1,5 @@
 <launch>
-
+    <node pkg="sensor_fusion" name="velocity_node" type="velocity.py" output="screen" />
     <node pkg="sensor_fusion" name="odometry_publisher" type="sensor_fusion_node" output="screen" />
 
     <node pkg="robot_localization" type="navsat_transform_node" name="navsat_transform_node" respawn="true" output="screen">
