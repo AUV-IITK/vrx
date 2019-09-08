@@ -44,7 +44,7 @@
   <arg name="x_config" value="$(eval int((thrust_config)=='X'))"/>
 
   <!-- For now - can only use the T configuration! -->
-  <arg if="$(arg t_config)" name="urdf" default="$(find wamv_gazebo)/urdf/wamv_gazebo.urdf.xacro"/>
+  <arg if="$(arg x_config)" name="urdf" default="$(find wamv_gazebo)/urdf/wamv_gazebo.urdf.xacro"/>
 
   <param name="robot_description"
          command="$(find xacro)/xacro &#x002D;&#x002D;inorder '$(arg urdf)'
