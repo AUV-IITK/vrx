@@ -1,6 +1,7 @@
 <launch>
-    <node pkg="gmapping" type="slam_gmapping" name="slam_gmapping" />    
-
+    <node pkg="gmapping" type="slam_gmapping" name="slam_gmapping" >    
+        <param name="delta" value="0.5"/>
+    </node>
     <!-- node name="octomap" pkg="octomap_server" type="octomap_server_node" output="screen">
 		<remap from="cloud_in" to="/lidar_wamv/points"/>
 		<param name="sensor_model/max_range" value="5"/>
@@ -25,7 +26,7 @@
             angle_min: -3.14 # -M_PI
             angle_max: 3.14 # M_PI
             angle_increment: 0.0087 # M_PI/360.0
-            scan_time: 0.3333
+            scan_time: 0.1
             range_min: 0.9
             range_max: 130
             use_inf: false
