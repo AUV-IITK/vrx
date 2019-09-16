@@ -1,0 +1,32 @@
+<launch>
+    <node pkg="gmapping" type="slam_gmapping" name="slam_gmapping" />    
+
+    <!-- Create a manager becuase nodelets wont launch without one-->
+    <node pkg="nodelet" type="nodelet" name="pointcloud_to_laserscan_manager" output="screen" respawn="true" args="manager"/>
+
+    <!-- push pointcloud_to_laserscan nodelet into the dummny manager above-->
+    <node pkg="nodelet" type="nodelet" name="pointcloud_to_laserscan_worker" args="load pointcloud_to_laserscan/pointcloud_to_laserscan_nodelet pointcloud_to_laserscan_manager">
+
+        <remap from="cloud_in" to="/lidar_wamv/points"/>
+        <rosparam>
+            target_frame: lidar_wamv_link 
+            transform_tolerance: 0.01
+            min_height: -5.0
+            max_height: 2.0
+
+            angle_min: -3.14 # -M_PI
+            angle_max: 3.14 # M_PI
+            angle_increment: 0.0087 # M_PI/360.0
+            scan_time: 0.3333
+            range_min: 0.1
+            range_max: 50
+            use_inf: true
+
+            # Concurrency level, affects number of pointclouds queued for processing, thread number governed by nodelet manager
+            # 0 : Detect number of cores
+            # 1 : Single threaded
+            # 2->inf : Parallelism level
+            concurrency_level: 0
+        </rosparam>
+   </node>
+</launch>
