@@ -16,9 +16,9 @@
 
     <!-- push pointcloud_to_laserscan nodelet into the dummny manager above-->
     <node pkg="nodelet" type="nodelet" name="pointcloud_to_laserscan_worker" args="load pointcloud_to_laserscan/pointcloud_to_laserscan_nodelet pointcloud_to_laserscan_manager">
-        <remap from="cloud_in" to="/lidar_wamv/points"/>
+        <remap from="cloud_in" to="/stereo/points2"/>
         <rosparam>
-            target_frame: lidar_wamv_link 
+            target_frame: front_left_camera_link 
             transform_tolerance: 0.01
             min_height: -5.0
             max_height: 2.0
@@ -38,5 +38,4 @@
             concurrency_level: 0
         </rosparam>
    </node>
-
 </launch>

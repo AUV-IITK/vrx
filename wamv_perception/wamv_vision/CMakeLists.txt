@@ -23,7 +23,7 @@ find_package(Boost REQUIRED COMPONENTS system)
 find_package(OpenCV REQUIRED)
 generate_messages (
     DEPENDENCIES
-    std_msgs
+    std_msgs   
 )
 
 
@@ -224,6 +224,14 @@ include_directories(
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
 
-add_executable(image1 src/open1.cpp)
-target_link_libraries(image1 ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
-add_dependencies(image1 wamv_vision_generate_messages_cpp)
+#add_executable(image src/open.cpp)
+#target_link_libraries(image ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
+#add_dependencies(image wamv_vision_generate_messages_cpp)
+
+add_executable(vision src/object_detection.cpp)
+target_link_libraries(vision ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
+add_dependencies(vision wamv_vision_generate_messages_cpp)
+
+#add_executable(talker src/test.cpp)
+#target_link_libraries(talker ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
+#add_dependencies(talker wamv_vision_generate_messages_cpp)
