@@ -7,24 +7,9 @@ This is an active development project.  We are adding and improving things all t
 
 ![VRX](images/sand_island.png)
 
-## Getting Started
+## Test result of target placard segmentation
 
- * Watch the [Release 0.2 Highlight Video](https://www.youtube.com/watch?v=v23cI4H9RKM)
- * The [VRX Wiki](https://bitbucket.org/osrf/vrx/wiki) provides documentation and tutorials.
- * The instructions assume a basic familiarity with the ROS environment and Gazebo.  If these tools are new to you, we recommend starting with the excellent [ROS Tutorials](http://wiki.ros.org/ROS/Tutorials)
- * For technical problems, please us the [project issue tracker](https://bitbucket.org/osrf/vrx/issues?status=new&status=open) to describe your problem or request support. 
- 
-## Contributing
+![VRX](images/scren.png)
 
-The simulation tools under active development to support the RobotX teams.  We are starting simple with the important fundamental aspects of the robot and environment, but will rely on the community to develop additional functionality around their particular use cases.
-
-If you have any questions about these topics, or would like to work on other aspects, please contribute.  You can contact us directly (see below), submit an [issue](https://bitbucket.org/osrf/vrx/issues) or, better yet, submit a [pull request](https://bitbucket.org/osrf/vrx/pull-requests/)!
-
-## Contributors
-
-We continue to receive important improvements from the community.  We have done our best to document this on our [Contributors Wiki](https://bitbucket.org/osrf/vrx/wiki/Contributors).
-
-## Contacts
-
- * Carlos Aguero <caguero@osrfoundation.org>
- * Brian Bingham <bbingham@nps.edu>
+## VRX Phase 1 Submission
+[Link to the test video](https://drive.google.com/open?id=1HaKgVgKi1E_mPw1qXY4EJwMicGdt8ACC)

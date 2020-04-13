@@ -18,7 +18,7 @@ void callback(const PointCloud::ConstPtr& cloud_msg){
   pcl::PassThrough<pcl::PointXYZ> pass;
   pass.setInputCloud(cloud_msg);
   pass.setFilterFieldName("z");
-  pass.setFilterLimits(0.0, 10.0);
+  pass.setFilterLimits(-1.0, 15.0);
   pass.filter(*cloud_filtered);
 
   //PointCloud* output (new PointCloud);

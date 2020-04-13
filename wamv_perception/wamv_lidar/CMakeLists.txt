@@ -210,3 +210,12 @@ include_directories(
 
 add_executable(passthroughFilter src/passthroughFilter.cpp)
 target_link_libraries(passthroughFilter ${catkin_LIBRARIES})
+
+add_executable(segmentation src/segmentation.cpp)
+target_link_libraries(segmentation ${catkin_LIBRARIES})
+
+add_executable(segmentCylinders src/segmentCylinders.cpp)
+target_link_libraries(segmentCylinders ${catkin_LIBRARIES})
+
+add_executable(centroid src/centroid.cpp)
+target_link_libraries(centroid ${catkin_LIBRARIES})
